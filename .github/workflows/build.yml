@@ -1,0 +1,56 @@
+on:
+  workflow_call:
+    inputs:
+      REGISTRY:
+        required: true
+        type: string
+      REPOSITORY:
+        required: true
+        type: string
+
+jobs:
+  build-push:
+    name: Build local context and push image
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Setup docker buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Check out the repo
+      uses: actions/checkout@v3
+
+    - name: Log in to the Container registry
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push Docker images
+      id: build-and-push
+      if: ${{inputs.REPOSITORY != 'Network' }}
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: |
+          ${{ inputs.REGISTRY }}/${{ inputs.REPOSITORY }}:latest
+          ${{ inputs.REGISTRY }}/${{ inputs.REPOSITORY }}:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push A-Block node
+      id: build-and-push-node
+      if: ${{inputs.REPOSITORY == 'Network' }}
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: |
+          ${{ inputs.REGISTRY }}/node:latest
+          ${{ inputs.REGISTRY }}/node:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        

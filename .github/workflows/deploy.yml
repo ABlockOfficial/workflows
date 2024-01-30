@@ -1,0 +1,44 @@
+on:
+  workflow_call:
+    inputs:
+      PROJECT_ID:
+        required: true
+        type: string
+      CLUSTER_NAME:
+        required: true
+        type: string
+      REGION:
+        required: true
+        type: string
+      DEPLOYMENT:
+        required: true
+        type: string
+    secrets:
+      GCLOUD_KEY:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to the A-Block platform
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Authenticate to gcp
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCLOUD_KEY }}
+
+    - name: Install gcloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ inputs.PROJECT_ID }}
+
+    - name: Get cluster credentials
+      uses: 'google-github-actions/get-gke-credentials@v1'
+      with:
+        cluster_name: ${{ inputs.CLUSTER_NAME }}
+        location: ${{ inputs.REGION }}
+    # check raft actins on rolling deployments
+    - name: Restart deployment
+      run: |
+        kubectl rollout restart deployment/${{ inputs.DEPLOYMENT }}

@@ -1,0 +1,38 @@
+on:
+  workflow_call:
+    inputs:
+      IMAGE:
+        required: true
+        type: string
+jobs:
+  trivy-image-scan:
+    name: Scan using Trivy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ inputs.IMAGE }}
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: false
+        vuln-type: 'os,library'
+        severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+      env:
+        TRIVY_USERNAME: ${{ github.actor }}
+        TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+  anchore-image-scan:
+    name: Scan using Anchore
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run Anchore vulnerability scanner
+      uses: anchore/scan-action@v3.3.6
+      with:
+        image: ${{ inputs.IMAGE }}  
+        registry-username: ${{ github.actor }}
+        registry-password: ${{ secrets.GITHUB_TOKEN }}
+        fail-build: false
+      env:
+        GRYPE_REGISTRY_AUTH_USERNAME: ${{ github.actor }}
+        GRYPE_REGISTRY_AUTH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
