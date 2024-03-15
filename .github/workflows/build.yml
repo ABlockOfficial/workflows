@@ -7,6 +7,10 @@ on:
       REPOSITORY:
         required: true
         type: string
+      NODE_TYPE:
+        required: false
+        type: string
+        default: 'compute'
 
 jobs:
   build-push:
@@ -47,9 +51,11 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        build-args: ${{ inputs.NODE_TYPE }}
         push: ${{ github.event_name != 'pull_request' }}
         tags: |
           ${{ inputs.REGISTRY }}/node:latest
+          ${{ inputs.REGISTRY }}/node:${{ inputs.NODE_TYPE }}
           ${{ inputs.REGISTRY }}/node:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
