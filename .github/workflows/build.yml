@@ -54,9 +54,8 @@ jobs:
         build-args: ${{ inputs.NODE_TYPE }}
         push: ${{ github.event_name != 'pull_request' }}
         tags: |
-          ${{ inputs.REGISTRY }}/node:latest
-          ${{ inputs.REGISTRY }}/node:${{ inputs.NODE_TYPE }}
-          ${{ inputs.REGISTRY }}/node:${{ github.sha }}
+          ${{ inputs.REGISTRY }}/aiblockofficial/node-${{ inputs.NODE_TYPE }}:latest
+          ${{ inputs.REGISTRY }}/aiblockofficial/node-${{ inputs.NODE_TYPE }}:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         
