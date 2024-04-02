@@ -10,7 +10,7 @@ on:
       NODE_TYPE:
         required: false
         type: string
-        default: 'compute'
+        default: 'mempool'
 
 jobs:
   build-push:
