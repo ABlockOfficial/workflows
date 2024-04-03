@@ -13,6 +13,7 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
+        scanners: vuln,secret,misconfig
         format: 'table'
         exit-code: '1'
         ignore-unfixed: false
