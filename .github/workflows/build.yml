@@ -16,6 +16,12 @@ jobs:
   build-push:
     name: Build local context and push image
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
     steps:
 
     - name: Setup docker buildx
@@ -51,6 +57,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        platforms: ${{ matrix.platform }}
         build-args: |
           NODE_TYPE_ARG=${{ inputs.NODE_TYPE }}
         push: ${{ github.event_name != 'pull_request' }}
