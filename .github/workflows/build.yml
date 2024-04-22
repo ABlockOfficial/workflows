@@ -7,21 +7,11 @@ on:
       REPOSITORY:
         required: true
         type: string
-      NODE_TYPE:
-        required: false
-        type: string
-        default: 'mempool'
 
 jobs:
   build-push:
     name: Build local context and push image
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
     steps:
 
     - name: Setup docker buildx
@@ -40,7 +30,6 @@ jobs:
 
     - name: Build and push Docker images
       id: build-and-push
-      if: inputs.REPOSITORY != 'aiblockofficial/network'
       uses: docker/build-push-action@v3
       with:
         context: .
