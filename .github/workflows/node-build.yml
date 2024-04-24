@@ -7,6 +7,10 @@ on:
       REPOSITORY:
         required: true
         type: string
+      TAG:
+        required: false
+        type: string
+        default: "latest"
       NODE_TYPE:
         required: false
         type: string
@@ -17,7 +21,7 @@ env:
 
 jobs:
   build:
-    name: Build local context and push image
+    name: Build & Push Image
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -100,7 +104,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
-            type=raw,value=latest
+            type=raw,value=${{ inputs.TAG }}
             type=sha
       - name: Log in to the Container registry
         uses: docker/login-action@v2
