@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    name: Build local context and push image
+    name: Build & Push Image
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
