@@ -14,7 +14,7 @@ on:
       PLATFORMS:
         required: false
         type: string
-        default: "['linux/amd64', linux/arm64]"
+        default: "['linux/amd64', 'linux/arm64']"
       BUILD_ARGS: 
         required: false
         type: string
